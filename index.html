@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Vibes Grade Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(to right, #fceabb, #f8b500);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url(pngtree-sand-and-palm-leaves-on-a-beach-background-summer-banner-template-picture-image_15577130.jpg);
+}
+
+/* Form Card */
+.container {
+    position: relative;
+    background: rgba(255,255,255,0.95);
+    padding: 30px;
+    border-radius: 25px;
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    overflow: visible;
+}
+
+/* Summer Icons */
+.container::before { content: "🌴"; position: absolute; top: 15px; left: 15px; font-size: 32px; }
+.container::after { content: "⛱️"; position: absolute; bottom: 15px; right: 15px; font-size: 32px; }
+.icon-top-right { position: absolute; top: 15px; right: 15px; font-size: 32px; }
+.icon-bottom-left { position: absolute; bottom: 15px; left: 15px; font-size: 32px; }
+
+.header-section {
+    width: 100%;
+    text-align: center;
+    gap: 25px;
+}
+
+.table-section {
+    width: 100%;
+}
+
+h1 {
+    font-size: 28px;
+    color: #ff5722;
+    margin: 0;
+    text-align: center;
+}
+
+p { color:#333; text-align:center; font-weight:500; margin:0; }
+
+/* Subjects + Grades grid */
+.subjects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+input {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+    width: 100%;
+    background: rgba(255,255,255,0.6);
+    color: #222;
+}
+
+input::placeholder { color: #222; }
+
+input:focus {
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 0 8px #ff5722, 0 0 12px #ffd500;
+}
+
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg,#ff5722,#ffd500);
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+button:hover {
+    background: linear-gradient(135deg,#ffd500,#ff5722);
+}
+
+.result { text-align: center; font-size: 18px; font-weight: bold; color: #ff5722; }
+
+/* Records */
+.records { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+
+.record {
+    background: #fff3cc;
+    padding: 10px;
+    border-radius: 10px;
+    border-left: 5px solid #ff5722;
+}
+
+/* Grades Table */
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 12px;
+    overflow: visible;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.grades-table th, .grades-table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.grades-table th {
+    background: linear-gradient(135deg,#ff5722,#ffd500);
+    color: white;
+    font-weight: bold;
+}
+.grades-table tr:nth-child(even) {
+    background: #fff3cc;
+}
+.grades-table input {
+    text-align: center;
+    width: 80px;
+}
+.total {
+    font-weight: bold;
+    color: #ff5722;
+}
+.delete-btn {
+    background: #ff4444;
+    padding: 5px 10px;
+    font-size: 12px;
+}
+.delete-btn:hover {
+    background: #cc0000;
+}
+.pct { font-size: 0.75em; opacity: 0.8; font-weight: normal; }
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+    <span class="icon-top-right">🌴☀️🏖️🕶️</span>
+    <span class="icon-bottom-left">👒🌊🏄‍♀️🍹</span>
+
+    <div class="header-section">
+        <h1>📊 Grading System 📊</h1>  
+    </div>
+    <div class="table-section">
+        <table id="gradesTable" class="grades-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th><div><b>Quiz</div><div class="pct">(20%)</b></div></th>
+                    <th><div><b>Laboratory</div><div class="pct">(30%)</b></div></th>
+                    <th><div><b>Assignment</div><div class="pct">(10%)</b></div></th>
+                    <th><div><b>Attendance</div><div class="pct">(10%)</b></div></th>
+                    <th><div><b>Major Exam</div><div class="pct">(30%)</b></div></th>
+                    <th><b>Total</b></th>
+                    <th><b>Action</b></th>
+                </tr>
+            </thead>
+            <tbody id="studentRows">
+            </tbody>
+        </table>
+        <button id="addStudentBtn">➕ Add Student</button>
+        <div id="classSummary" class="result">--</div>
+    </div>
+</div>
+
+  
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyALVP9-MPz7Deq1ZfWLq8UdqfTRXdVIUtQ",
+  authDomain: "crivex-grade-calculator.firebaseapp.com",
+  databaseURL: "https://crivex-grade-calculator-default-rtdb.asia-southeast1.firebasedatabase.app/",
+  projectId: "crivex-grade-calculator",
+  storageBucket: "crivex-grade-calculator.firebasedatabase.app",
+  messagingSenderId: "744541092588",
+  appId: "1:744541092588:web:14492c1a8c692ed88943c9"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+let subjectsLocked = false;
+
+const subjectNames = Array.from(document.querySelectorAll('.subject-name'));
+const subjectGrades = Array.from(document.querySelectorAll('.subject-grade'));
+const recordsDiv = document.getElementById('records');
+const averageDisplay = document.getElementById('averageDisplay');
+
+function limitGrade(input) {
+    input.value = input.value.replace(/[^0-9]/g,'');
+    if(input.value > 99) input.value = 99;
+}
+
+subjectGrades.forEach(input => {
+    input.addEventListener('input', () => limitGrade(input));
+});
+
+function compute() {
+    const name = document.getElementById('studentName').value.trim() || "Unnamed";
+    const data = [];
+    let total = 0;
+
+    for(let i=0;i<subjectGrades.length;i++){
+        const grade = parseInt(subjectGrades[i].value) || 0;
+        const subName = subjectNames[i].value || `Subject ${i+1}`;
+        total += grade;
+        data.push({name: subName, grade});
+    }
+
+    const avg = (total / data.length).toFixed(2);
+    averageDisplay.textContent = `${name}'s Average: ${avg}`;
+
+    if(!subjectsLocked){
+        subjectNames.forEach(sub => sub.readOnly = true);
+        subjectsLocked = true;
+    }
+
+    const gradesRef = ref(database,'grades/');
+    const newGradeRef = push(gradesRef);
+    set(newGradeRef,{
+        name,
+        subjects: data,
+        average: avg,
+        timestamp: new Date().toISOString()
+    });
+
+    const recDiv = document.createElement('div');
+    recDiv.className = 'record';
+    let html = `<strong>${name}</strong><br>`;
+    data.forEach(d => html += `${d.name}: ${d.grade}<br>`);
+    html += `<strong>Average: ${avg}</strong>`;
+    recordsDiv.prepend(recDiv);
+    recDiv.innerHTML = html;
+
+    document.getElementById('studentName').value = '';
+    subjectGrades.forEach(input => input.value = '');
+}
+document.getElementById('calculateBtn').addEventListener('click', compute);
+    </script>
+  <script src="grading_system.js"></script>
+
+</body>
+</html>
